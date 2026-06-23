@@ -19,7 +19,7 @@ if st.button("✨ Analisar com IA e Gerar LME"):
             try:
                 genai.configure(api_key=api_key)
                 
-                # TRUQUE DE MESTRE: Busca os modelos liberados para a sua conta automaticamente
+                # Busca os modelos liberados para a sua conta automaticamente
                 modelos_disponiveis = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
                 
                 # Tenta usar o mais rápido (flash), se não achar, pega o primeiro da lista
@@ -37,9 +37,11 @@ if st.button("✨ Analisar com IA e Gerar LME"):
                 
                 resposta = model.generate_content(prompt)
                 
-                texto_json = resposta.text.strip().replace("```json", "").replace("
-```", "")
-                dados_ia = json.loads(texto_json)
+                # SOLUÇÃO DO ERRO: Forma segura de limpar o texto sem usar três crases seguidas
+                texto_json = resposta.text.strip()
+                texto_json = texto_json.replace('`' * 3 + 'json', '')
+                texto_json = texto_json.replace('`' * 3, '')
+                dados_ia = json.loads(texto_json.strip())
                 
                 # Dados fixos
                 dados_ia['CNES'] = '7241798'
