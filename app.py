@@ -18,7 +18,7 @@ if st.button("✨ Analisar com IA e Gerar LME"):
         with st.spinner("A IA está lendo o prontuário e preenchendo o formulário..."):
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel('gemini-1.5-flash')
+               model = genai.GenerativeModel('gemini-pro')
                 
                 prompt = f"""
                 Extraia os dados para preencher um formulário LME. Retorne APENAS um JSON válido.
