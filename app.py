@@ -18,8 +18,14 @@ if st.button("✨ Analisar com IA e Gerar LME"):
         with st.spinner("A IA está lendo o prontuário e preenchendo o formulário..."):
             try:
                 genai.configure(api_key=api_key)
-                # Modelo corrigido e com alinhamento perfeito
-                model = genai.GenerativeModel('gemini-pro')
+                
+                # TRUQUE DE MESTRE: Busca os modelos liberados para a sua conta automaticamente
+                modelos_disponiveis = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+                
+                # Tenta usar o mais rápido (flash), se não achar, pega o primeiro da lista
+                modelo_ideal = next((m for m in modelos_disponiveis if '1.5-flash' in m), modelos_disponiveis[0])
+                
+                model = genai.GenerativeModel(modelo_ideal)
                 
                 prompt = f"""
                 Extraia os dados para preencher um formulário LME. Retorne APENAS um JSON válido.
@@ -31,7 +37,8 @@ if st.button("✨ Analisar com IA e Gerar LME"):
                 
                 resposta = model.generate_content(prompt)
                 
-                texto_json = resposta.text.strip().replace("```json", "").replace("```", "")
+                texto_json = resposta.text.strip().replace("```json", "").replace("
+```", "")
                 dados_ia = json.loads(texto_json)
                 
                 # Dados fixos
@@ -51,7 +58,7 @@ if st.button("✨ Analisar com IA e Gerar LME"):
                 writer.write(output_pdf)
                 output_pdf.seek(0)
                 
-                st.success("✅ LME interpretada e gerada com sucesso pela IA!")
+                st.success(f"✅ LME interpretada com sucesso usando o modelo: {modelo_ideal.split('/')[-1]}")
                 st.download_button(
                     label="📥 Baixar PDF Preenchido",
                     data=output_pdf,
