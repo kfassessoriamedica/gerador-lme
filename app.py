@@ -18,7 +18,8 @@ if st.button("✨ Analisar com IA e Gerar LME"):
         with st.spinner("A IA está lendo o prontuário e preenchendo o formulário..."):
             try:
                 genai.configure(api_key=api_key)
-               model = genai.GenerativeModel('gemini-pro')
+                # Modelo corrigido e com alinhamento perfeito
+                model = genai.GenerativeModel('gemini-pro')
                 
                 prompt = f"""
                 Extraia os dados para preencher um formulário LME. Retorne APENAS um JSON válido.
@@ -30,7 +31,6 @@ if st.button("✨ Analisar com IA e Gerar LME"):
                 
                 resposta = model.generate_content(prompt)
                 
-                # Linha corrigida com aspas duplas para evitar corte
                 texto_json = resposta.text.strip().replace("```json", "").replace("```", "")
                 dados_ia = json.loads(texto_json)
                 
